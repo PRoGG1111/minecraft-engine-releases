@@ -1,0 +1,25 @@
+name: Publish verified Android Mobile Next
+on:
+  push:
+    branches: [main]
+    paths: [android-next-release.json]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: android-next-github-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Prepare APK verification tools
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "build-tools;35.0.0"'
+      - name: Verify signatures and publish immutable APK release
+        run: python3 .github/scripts/publish-mobile-next.py
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
