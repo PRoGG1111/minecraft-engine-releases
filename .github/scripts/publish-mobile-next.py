@@ -90,15 +90,16 @@ def main():
         pins = re.findall(r'^Signer #\d+ certificate SHA-256 digest: ([a-fA-F0-9]{64})$', signature, re.M)
         assert len(pins) == 1 and pins[0].lower() == PIN
         subprocess.run([str(tools / 'zipalign'), '-c', '-P', '16', '4', str(path)], check=True)
-    notes = ('Мобильный выпуск Mobile Next с новой подписью и отдельными пакетами. '
-             'Устанавливается рядом с прежними приложениями. Миры старой игры остаются в ней; автоматического импорта нет.\n\n'
+    notes = ('Жиркрафт 2 · Mobile Next — обновление игры и Android-лаунчера. '
+             'Устанавливается поверх прежнего Next с сохранением миров и настроек. '
+             'Для старых приложений без Next автоматического импорта миров нет.\n\n'
              'Для установки скачайте MinecraftEngine-Launcher.apk, затем установите игру через него. '
              'Аккаунты и друзья работают через публичный HTTPS-сервер. Следующие обновления Next доступны через лаунчер.\n\n'
              + feed['launcher']['notes'] + '\n\nИсходники сборки: PRoGG1111/minecraft-engine@' + task['source_sha'] + '\n')
     latest_before = api('GET', '/releases/latest')
     release = api('GET', '/releases/tags/' + task['tag'])
     if release is None:
-        release = api('POST', '/releases', {'tag_name': task['tag'], 'name': 'Minecraft Engine Mobile Next ' + feed['launcher']['version'],
+        release = api('POST', '/releases', {'tag_name': task['tag'], 'name': 'Жиркрафт 2 · Mobile Next ' + feed['launcher']['version'],
                       'body': notes, 'draft': True, 'prerelease': True, 'make_latest': 'false'})
     if release['draft']:
         for name in FILES + ['build-manifest.json']:
